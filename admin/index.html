@@ -286,7 +286,7 @@
 const SUPABASE_URL = 'https://chxdjvhbgerrkylvrnga.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoeGRqdmhiZ2Vycmt5bHZybmdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MjM5OTgsImV4cCI6MjA4ODA5OTk5OH0.tG8rHykBSSWrNdpOb4bHnqNntOPst5nOc3qGXH7KehE';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let signupChart, authChart, billingChart;
 
@@ -301,7 +301,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   btn.disabled = true;
   error.textContent = '';
 
-  const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+  const { error: authError } = await sb.auth.signInWithPassword({ email, password });
 
   if (authError) {
     error.textContent = '로그인 실패: ' + authError.message;
@@ -313,7 +313,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 });
 
 async function logout() {
-  await supabase.auth.signOut();
+  await sb.auth.signOut();
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
 }
@@ -329,11 +329,11 @@ async function loadDashboard() {
 
   try {
     const [summary, signups, providers, popular, billing] = await Promise.all([
-      supabase.rpc('get_admin_summary'),
-      supabase.rpc('get_admin_signups_by_date'),
-      supabase.rpc('get_admin_auth_providers'),
-      supabase.rpc('get_admin_popular_subscriptions'),
-      supabase.rpc('get_admin_billing_cycles'),
+      sb.rpc('get_admin_summary'),
+      sb.rpc('get_admin_signups_by_date'),
+      sb.rpc('get_admin_auth_providers'),
+      sb.rpc('get_admin_popular_subscriptions'),
+      sb.rpc('get_admin_billing_cycles'),
     ]);
 
     if (summary.error) throw new Error(summary.error.message);
@@ -456,7 +456,7 @@ function renderPopularTable(data) {
 
 // 세션 체크 - 이미 로그인되어 있으면 대시보드 표시
 (async () => {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await sb.auth.getSession();
   if (session) showDashboard();
 })();
 </script>
