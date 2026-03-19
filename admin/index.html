@@ -238,7 +238,7 @@
 
     <!-- 가입 추이 차트 -->
     <div class="section">
-      <h2>회원가입 추이 (최근 30일)</h2>
+      <h2>사용자 추이 (최근 30일)</h2>
       <div class="chart-container">
         <canvas id="signupChart"></canvas>
       </div>
@@ -373,22 +373,32 @@ function renderSignupChart(data) {
         const date = new Date(d.date);
         return `${date.getMonth()+1}/${date.getDate()}`;
       }),
-      datasets: [{
-        label: '가입자 수',
-        data: data.map(d => d.count),
-        backgroundColor: '#34C75940',
-        borderColor: '#34C759',
-        borderWidth: 2,
-        borderRadius: 4,
-      }]
+      datasets: [
+        {
+          label: '회원',
+          data: data.map(d => d.member_count),
+          backgroundColor: '#007AFF80',
+          borderColor: '#007AFF',
+          borderWidth: 2,
+          borderRadius: 4,
+        },
+        {
+          label: '비회원',
+          data: data.map(d => d.anonymous_count),
+          backgroundColor: '#FF950080',
+          borderColor: '#FF9500',
+          borderWidth: 2,
+          borderRadius: 4,
+        }
+      ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: { legend: { display: true, position: 'top' } },
       scales: {
-        y: { beginAtZero: true, ticks: { stepSize: 1 } },
-        x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } }
+        y: { beginAtZero: true, ticks: { stepSize: 1 }, stacked: true },
+        x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10 }, stacked: true }
       }
     }
   });
@@ -449,7 +459,7 @@ function renderPopularTable(data) {
       <td>${i + 1}</td>
       <td>${d.icon || ''} ${d.service_name}</td>
       <td><strong>${d.user_count}</strong>명</td>
-      <td>${d.currency}${Number(d.avg_price).toLocaleString()}</td>
+      <td>₩${Number(d.avg_price_krw).toLocaleString()}</td>
     </tr>
   `).join('');
 }
